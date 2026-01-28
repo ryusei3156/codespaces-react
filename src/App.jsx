@@ -15,7 +15,10 @@ function App() {
 
   // 【追加】todosの状態が変化するたびにデータを保存 (ver.1.1)
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos)); // 配列を文字列に変換して保存
+    // todosが空でないときだけ保存するようにガードをかける
+    if (todos.length > 0) {
+      localStorage.setItem("todos", JSON.stringify(todos)); // 配列を文字列に変換して保存
+    }
   }, [todos]); // todosが更新されるたびに実行
 
   // タスクを追加する関数
@@ -47,7 +50,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ToDo App (ver.1.1)</h1>
+        <h1>ToDo App (ver.1.1.1)</h1>
         
         <div className="input-area">
           <input 
