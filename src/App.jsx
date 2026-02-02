@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; // useEffectを追加
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
 
   // 【追加】ブラウザ読み込み時にデータを取得 (ver.1.1)
   useEffect(() => {
-    const savedTodos = localStorage.getItem("todos"); // "todos"という名前で保存されたデータを取得
+    const savedTodos = localStorage.getItem("todos");
     if (savedTodos) {
       setTodos(JSON.parse(savedTodos)); // 文字列を配列に戻してセット
     }
@@ -16,7 +16,7 @@ function App() {
   // 【追加】todosの状態が変化するたびにデータを保存 (ver.1.1)
   useEffect(() => {
     // todosが空でないときだけ保存するようにガードをかける
-    if (todos.length > 0) {
+    if (todos.length > 0) {  // ver.1.1.1
       localStorage.setItem("todos", JSON.stringify(todos)); // 配列を文字列に変換して保存
     }
   }, [todos]); // todosが更新されるたびに実行
@@ -24,10 +24,13 @@ function App() {
   // タスクを追加する関数
   const addTodo = () => {
     if (inputValue === "") return;
+    const date = new Date()
+    const dateString = date.toLocaleDateString('ja-JP')
     const newTodo = {
       id: Date.now(),
       text: inputValue,
-      completed: false
+      completed: false,
+      day: dateString
     };
     setTodos([...todos, newTodo]);
     setInputValue("");
@@ -50,8 +53,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ToDo App (ver.1.1.1)</h1>
-        
+        <h1>ToDo App (ver.1.2.0)</h1>
         <div className="input-area">
           <input 
             type="text" 
@@ -59,13 +61,15 @@ function App() {
             onChange={(e) => setInputValue(e.target.value)} 
             placeholder="タスクを入力"
           />
-          <button onClick={addTodo} className="add-button">追加</button>
+          <button onClick={addTodo} className="add-button">
+            追加
+          </button>
+          <p>入力中: {inputValue}</p>
         </div>
-
         <ul className="todo-list">
           {todos.map((todo) => (
             <li key={todo.id} className="todo-wrapper">
-              <div className="todo-item">
+              <div className="todo-task">
                 <input 
                   type="checkbox" 
                   checked={todo.completed} 
@@ -75,6 +79,9 @@ function App() {
                 <span className={todo.completed ? "todo-text completed" : "todo-text"}>
                   {todo.text}
                 </span>
+              <div className='todo-addDay'>
+                {todo.day}
+              </div>
               </div>
               <button onClick={() => deleteTodo(todo.id)} className="delete-button">
                 削除

@@ -40,20 +40,20 @@
 .todo-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 15px;
-  gap: 15px; /* タスク枠と削除ボタンの間の余白 */
+  gap: 20px; /* タスク枠と削除ボタンの間の余白 */
 }
 
 /* タスクのメイン枠 */
-.todo-item {
+.todo-task {
   background: #3b4454;
   padding: 15px;
   display: flex;
   align-items: center;
   border-radius: 8px;
   flex-grow: 1; /* 枠を可能な限り広げる */
-  max-width: 400px;
+  max-width: 300px;
 }
 
 .todo-checkbox {
@@ -72,6 +72,16 @@
 .completed {
   text-decoration: line-through;
   color: #888;
+}
+
+/*追加日*/
+.todo-addDay {
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  min-width: none;
+  white-space: nowrap;
 }
 
 /* 削除ボタンのスタイル */
