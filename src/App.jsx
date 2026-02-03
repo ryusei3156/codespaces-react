@@ -4,6 +4,7 @@ import './App.css';
 function App() {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   // 【追加】ブラウザ読み込み時にデータを取得 (ver.1.1)
   useEffect(() => {
@@ -30,10 +31,12 @@ function App() {
       id: Date.now(),
       text: inputValue,
       completed: false,
-      day: dateString
+      day: dateString,
+      deadline
     };
     setTodos([...todos, newTodo]);
     setInputValue("");
+    setDeadline("");
   };
 
   // 完了状態を切り替える関数
@@ -61,10 +64,16 @@ function App() {
             onChange={(e) => setInputValue(e.target.value)} 
             placeholder="タスクを入力"
           />
+          <input type="date" 
+          value={deadline} 
+          onChange={(e) => setDeadline(e.target.value)} 
+          /> {/*期限*/}
           <button onClick={addTodo} className="add-button">
             追加
           </button>
+          {/*
           <p>入力中: {inputValue}</p>
+          */}
         </div>
         <ul className="todo-list">
           {todos.map((todo) => (
@@ -81,6 +90,9 @@ function App() {
                 </span>
               <div className='todo-addDay'>
                 {todo.day}
+              </div>
+              <div className='todo-addDay'>
+                {todo.deadline}
               </div>
               </div>
               <button onClick={() => deleteTodo(todo.id)} className="delete-button">
