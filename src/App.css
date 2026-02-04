@@ -83,12 +83,28 @@
   word-break: break-all;
 }
 
-.todo-checkbox {
+/* .todo-checkbox {
   margin-right: 15px;
   min-width: 20px;
   height: 20px;
   cursor: pointer;
+} */
+
+.status-button {
+  min-width: 70px;
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 15px;
+  font-size: 0.85rem;
 }
+.status-0 { background-color: #f39c12; } /* 未着手: オレンジ */
+.status-1 { background-color: #3498db; } /* 進行中: 青 */
+.status-2 { background-color: #2ecc71; } /* 完了: 緑 */
 
 .todo-text {
   font-size: 1.2rem;

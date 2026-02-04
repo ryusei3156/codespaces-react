@@ -34,7 +34,7 @@ function App() {
     const newTodo = {
       id: Date.now(),
       text: inputValue,
-      completed: false,
+      statusNum: 0,
       day: dateString,
       deadline: formattedDeadline
     };
@@ -43,11 +43,12 @@ function App() {
     setDeadline("");
   };
 
-  // 完了状態を切り替える関数
+  // 状態を切り替える関数
   const toggleTodo = (id) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.id === id ? { ...todo, statusNum: todo.statusNum + 1} : todo
+        /*todo.id === id ? { ...todo, completed: !todo.completed } : todo */
       )
     );
   };
@@ -60,7 +61,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ToDo App (ver.1.3.1)</h1>
+        <h1>ToDo App (ver.1.4.0)</h1>
         <div className="input-area">
           <input 
             type="text" 
@@ -68,7 +69,8 @@ function App() {
             onChange={(e) => setInputValue(e.target.value)} 
             placeholder="タスクを入力"
           />
-          <input type="date" 
+          <input 
+          type="date" 
           value={deadline} 
           onChange={(e) => setDeadline(e.target.value)} 
           /> {/*期限*/}
@@ -86,16 +88,24 @@ function App() {
           <span className="label-delete"></span>
         </div>
         <ul className="todo-list">
-          {todos.map((todo) => (
+          {todos.map((todo) => {
+            const statusLabels = ["未着手", "進行中", "完了"];
+            const currentStatus = statusLabels[todo.statusNum % 3];
+
+            return (
             <li key={todo.id} className="todo-wrapper">
               <div className="todo-main">
-                <input 
+                <button onClick={() =>toggleTodo(todo.id)} className={`status-button status-${todo.statusNum % 3}`}>
+                  {currentStatus}
+                </button>
+                {/* <input 
                   type="checkbox" 
                   checked={todo.completed} 
                   onChange={() => toggleTodo(todo.id)} 
                   className="todo-checkbox"
                 />
-                <span className={todo.completed ? "todo-text completed" : "todo-text"}>
+                チェックボックス */}
+                <span className={todo.statusNum % 3 == 2 ? "todo-text completed" : "todo-text"}>
                   {todo.text}
                 </span>
               </div>
@@ -105,7 +115,8 @@ function App() {
                 削除
               </button>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </header>
     </div>
