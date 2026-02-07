@@ -116,6 +116,13 @@
   color: #888;
 }
 
+.warning-red {
+  color: #ff4d4f;
+}
+.warning-yellow {
+  color: #f1c40f;
+}
+
 .delete-button {
   background-color: #ff4d4f;
   color: white;

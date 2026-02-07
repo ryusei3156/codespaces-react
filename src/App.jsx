@@ -3,8 +3,8 @@ import './App.css';
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [deadline, setDeadline] = useState("");
+  const [inputTask, setInputTask] = useState("");
+  const [inputDeadline, setInputDeadline] = useState("");
 
   // ブラウザ読み込み時にデータを取得
   useEffect(() => {
@@ -24,23 +24,29 @@ function App() {
 
   // タスクを追加する関数
   const addTodo = () => {
-    if (inputValue === "") return;
-    const date = new Date()
+    if (inputTask === "") return;
+    const addMs = Date.now();
+    /* const date = new Date()
     const dateString = date.toLocaleDateString('ja-JP')
-    // ハイフン(-)をスラッシュ(/)に書き換える（2026-02-26 -> 2026/02/26）
-    const formattedDeadline = deadline
-      ? deadline.replace(/-/g, '/')
+    // ハイフン(-)をスラッシュ(/)に書き換える（2026-02-26 -> 2026/02/26）*/
+    const formattedDeadline = inputDeadline
+      ? inputDeadline.replace(/-/g, '/')
       : "ー";
+
     const newTodo = {
-      id: Date.now(),
-      text: inputValue,
+      id: addMs,
+      text: inputTask,
       statusNum: 0,
-      day: dateString,
+      day: new Date(addMs).toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }),
       deadline: formattedDeadline
     };
     setTodos([...todos, newTodo]);
-    setInputValue("");
-    setDeadline("");
+    setInputTask("");
+    setInputDeadline("");
   };
 
   // 状態を切り替える関数
@@ -61,24 +67,24 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ToDo App (ver.1.4.0)</h1>
+        <h1>ToDo App (ver.1.5.0)</h1>
         <div className="input-area">
           <input 
             type="text" 
-            value={inputValue} 
-            onChange={(e) => setInputValue(e.target.value)} 
+            value={inputTask} 
+            onChange={(e) => setInputTask(e.target.value)} 
             placeholder="タスクを入力"
           />
           <input 
           type="date" 
-          value={deadline} 
-          onChange={(e) => setDeadline(e.target.value)} 
+          value={inputDeadline} 
+          onChange={(e) => setInputDeadline(e.target.value)} 
           /> {/*期限*/}
           <button onClick={addTodo} className="add-button">
             追加
           </button>
           {/*
-          <p>入力中: {inputValue}</p>
+          <p>入力中: {inputTask}</p>
           */}
         </div>
         <div className="todo-labels">
@@ -92,6 +98,24 @@ function App() {
             const statusLabels = ["未着手", "進行中", "完了"];
             const currentStatus = statusLabels[todo.statusNum % 3];
 
+            const a = todo.id;           // タスク作成時の時間（ms）
+            const b = Date.parse(todo.deadline); // 期限の時間（ms）
+            const c = Date.now();                // 今（Appを操作しているとき）の時間（ms）
+
+            let progressClass = ""; // 色を変えるためのクラス名を入れる箱
+
+            if (todo.deadline !== "ー") {
+              const totalTime = b - a;
+              const remainingTime = b - c;
+              const d = remainingTime / totalTime; // 残り時間の割合
+              // console.log(`タスク: ${todo.text}, bの値: ${b}, dの値: ${d}`); // デバック
+              if (d <= 0.2) {
+                progressClass = "warning-red";    // 残り20%以下
+              } else if (d <= 0.5) {
+                progressClass = "warning-yellow"; // 残り50%以下
+              }
+            }
+            
             return (
             <li key={todo.id} className="todo-wrapper">
               <div className="todo-main">
@@ -105,7 +129,7 @@ function App() {
                   className="todo-checkbox"
                 />
                 チェックボックス */}
-                <span className={todo.statusNum % 3 == 2 ? "todo-text completed" : "todo-text"}>
+                <span className={`todo-text ${todo.statusNum % 3 === 2 ? "completed" : ""} ${progressClass}`}>
                   {todo.text}
                 </span>
               </div>
