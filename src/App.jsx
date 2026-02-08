@@ -64,10 +64,34 @@ function App() {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
+  // タスクの並び替え
+  const calculateD = (todo) => {
+    if (todo.deadline === "ー") return 1; // 期限なしは余裕度d=1とみなす
+    const a = todo.id; // タスク作成時の時間（ms）
+    const b = Date.parse(todo.deadline); // 期限の時間（ms）
+    const c = Date.now(); // 今（Appを操作しているとき）の時間（ms）
+    return (b - c) / (b - a); //余裕度d
+  };
+
+  const sortedTodos = [...todos].sort((taskX, taskY) => {
+    const b_X = taskX.deadline === "ー" ? Infinity : Date.parse(taskX.deadline);
+    const b_Y = taskY.deadline === "ー" ? Infinity : Date.parse(taskY.deadline);
+
+    if (b_X !== b_Y) {
+      // 期限が違う場合は、ここで終了
+      return b_X - b_Y;
+    } else {
+      // 期限が同じ場合は、余裕度で並び替え
+      const d_X = calculateD(taskX);
+      const d_Y = calculateD(taskY);
+      return d_X - d_Y;
+    }
+  });
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ToDo App (ver.1.5.0)</h1>
+        <h1>ToDo App (ver.1.5.1)</h1>
         <div className="input-area">
           <input 
             type="text" 
@@ -94,28 +118,20 @@ function App() {
           <span className="label-delete"></span>
         </div>
         <ul className="todo-list">
-          {todos.map((todo) => {
+          {sortedTodos.map((todo) => {
             const statusLabels = ["未着手", "進行中", "完了"];
             const currentStatus = statusLabels[todo.statusNum % 3];
 
-            const a = todo.id;           // タスク作成時の時間（ms）
-            const b = Date.parse(todo.deadline); // 期限の時間（ms）
-            const c = Date.now();                // 今（Appを操作しているとき）の時間（ms）
-
+            const d = calculateD(todo); //余裕度d
             let progressClass = ""; // 色を変えるためのクラス名を入れる箱
-
             if (todo.deadline !== "ー") {
-              const totalTime = b - a;
-              const remainingTime = b - c;
-              const d = remainingTime / totalTime; // 残り時間の割合
-              // console.log(`タスク: ${todo.text}, bの値: ${b}, dの値: ${d}`); // デバック
               if (d <= 0.2) {
                 progressClass = "warning-red";    // 残り20%以下
               } else if (d <= 0.5) {
                 progressClass = "warning-yellow"; // 残り50%以下
               }
             }
-            
+
             return (
             <li key={todo.id} className="todo-wrapper">
               <div className="todo-main">
