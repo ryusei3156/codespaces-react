@@ -74,24 +74,34 @@ function App() {
   };
 
   const sortedTodos = [...todos].sort((taskX, taskY) => {
-    const b_X = taskX.deadline === "ー" ? Infinity : Date.parse(taskX.deadline);
-    const b_Y = taskY.deadline === "ー" ? Infinity : Date.parse(taskY.deadline);
+    const isCompletedX = taskX.statusNum % 3 === 2;
+    const isCompletedY = taskY.statusNum % 3 === 2;
 
-    if (b_X !== b_Y) {
-      // 期限が違う場合は、ここで終了
-      return b_X - b_Y;
+    // タスクが「完了」かどうかで判定
+    if (isCompletedX !== isCompletedY) {
+      // 片方だけ完了している場合：taskXがtrue（完了）なら後ろ(1)にする
+      return isCompletedX ? 1 : -1;
     } else {
-      // 期限が同じ場合は、余裕度で並び替え
-      const d_X = calculateD(taskX);
-      const d_Y = calculateD(taskY);
-      return d_X - d_Y;
+
+      const b_X = taskX.deadline === "ー" ? Infinity : Date.parse(taskX.deadline);
+      const b_Y = taskY.deadline === "ー" ? Infinity : Date.parse(taskY.deadline);
+
+      if (b_X !== b_Y) {
+        // 期限が違う場合は、ここで終了
+        return b_X - b_Y;
+      } else {
+        // 期限が同じ場合は、余裕度で並び替え
+        const d_X = calculateD(taskX);
+        const d_Y = calculateD(taskY);
+        return d_X - d_Y;
+      }
     }
   });
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ToDo App (ver.1.5.1)</h1>
+        <h1>ToDo App (ver.1.5.2)</h1>
         <div className="input-area">
           <input 
             type="text" 
